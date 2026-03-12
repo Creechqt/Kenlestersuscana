@@ -10,7 +10,7 @@ students = [
     {"id": 3, "name": "Pedro", "grade": 70, "section": "Zion"}
 ]
 
-# ---------- HOME / LIST STUDENTS ----------
+# ---------- LIST STUDENTS ----------
 @app.route('/')
 @app.route('/students')
 def list_students():
