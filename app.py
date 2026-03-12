@@ -27,7 +27,15 @@ def list_students():
             body { font-family: Arial, sans-serif; margin: 20px; }
             ul { list-style-type: none; padding: 0; }
             li { margin-bottom: 10px; }
-            a { text-decoration: none; color: blue; margin-left: 10px; }
+            a { text-decoration: none; color: white; }
+            .button {
+                display: inline-block;
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
             .flash { color: green; }
         </style>
     </head>
@@ -42,7 +50,10 @@ def list_students():
             </ul>
           {% endif %}
         {% endwith %}
-        <a href="{{ url_for('add_student_form') }}">Add New Student</a>
+        
+        <!-- ADD STUDENT BUTTON -->
+        <a href="{{ url_for('add_student_form') }}" class="button">+ Add New Student</a>
+
         <ul>
         {% for s in students %}
             <li>
@@ -67,7 +78,7 @@ def add_student_form():
         <title>Add Student</title>
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
-            input { margin-bottom: 10px; padding: 5px; }
+            input { margin-bottom: 10px; padding: 5px; width: 200px; }
             button { padding: 5px 10px; }
         </style>
     </head>
@@ -119,7 +130,7 @@ def edit_student(id):
         <title>Edit Student</title>
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
-            input { margin-bottom: 10px; padding: 5px; }
+            input { margin-bottom: 10px; padding: 5px; width: 200px; }
             button { padding: 5px 10px; }
         </style>
     </head>
