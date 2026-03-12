@@ -61,14 +61,28 @@ def list_students():
 @app.route('/add_student_form')
 def add_student_form():
     html = """
-    <h2>Add New Student</h2>
-    <form action="{{ url_for('add_student') }}" method="POST">
-        Name: <input type="text" name="name" required autofocus><br><br>
-        Grade: <input type="number" name="grade" required><br><br>
-        Section: <input type="text" name="section" required><br><br>
-        <button type="submit">Add Student</button>
-    </form>
-    <br><a href="{{ url_for('list_students') }}">Back to Student List</a>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Add Student</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            input { margin-bottom: 10px; padding: 5px; }
+            button { padding: 5px 10px; }
+        </style>
+    </head>
+    <body>
+        <h2>Add New Student</h2>
+        <form action="{{ url_for('add_student') }}" method="POST">
+            Name: <input type="text" name="name" required autofocus><br>
+            Grade: <input type="number" name="grade" required><br>
+            Section: <input type="text" name="section" required><br>
+            <button type="submit">Add Student</button>
+        </form>
+        <br>
+        <a href="{{ url_for('list_students') }}">Back to Student List</a>
+    </body>
+    </html>
     """
     return render_template_string(html)
 
@@ -99,14 +113,28 @@ def edit_student(id):
         return redirect(url_for('list_students'))
 
     html = """
-    <h2>Edit Student</h2>
-    <form method="POST">
-        Name: <input type="text" name="name" value="{{ student.name }}" required><br><br>
-        Grade: <input type="number" name="grade" value="{{ student.grade }}" required><br><br>
-        Section: <input type="text" name="section" value="{{ student.section }}" required><br><br>
-        <button type="submit">Update Student</button>
-    </form>
-    <br><a href="{{ url_for('list_students') }}">Back to Student List</a>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Edit Student</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            input { margin-bottom: 10px; padding: 5px; }
+            button { padding: 5px 10px; }
+        </style>
+    </head>
+    <body>
+        <h2>Edit Student</h2>
+        <form method="POST">
+            Name: <input type="text" name="name" value="{{ student.name }}" required><br>
+            Grade: <input type="number" name="grade" value="{{ student.grade }}" required><br>
+            Section: <input type="text" name="section" value="{{ student.section }}" required><br>
+            <button type="submit">Update Student</button>
+        </form>
+        <br>
+        <a href="{{ url_for('list_students') }}">Back to Student List</a>
+    </body>
+    </html>
     """
     return render_template_string(html, student=student)
 
