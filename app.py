@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template_string, redirect, url_for, flash
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Needed for flash messages
+app.secret_key = "supersecretkey"
 
 # In-memory student list
 students = [
@@ -10,59 +10,59 @@ students = [
     {"id": 3, "name": "Pedro", "grade": 70, "section": "Zion"}
 ]
 
-# ---------- HOME ----------
+# ---------- HOME / LIST STUDENTS ----------
 @app.route('/')
-def home():
-    return redirect(url_for('list_students'))
-
-# ---------- LIST STUDENTS ----------
 @app.route('/students')
 def list_students():
     html = """
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Student List</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            ul { list-style-type: none; padding: 0; }
-            li { margin-bottom: 10px; }
-            a { text-decoration: none; color: white; }
-            .button {
-                display: inline-block;
-                padding: 8px 16px;
-                background-color: #4CAF50;
-                color: white;
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }
-            .flash { color: green; }
-        </style>
+        <title>Student Dashboard</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     </head>
-    <body>
-        <h1>Student List</h1>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class="flash">
-            {% for msg in messages %}
-              <li>{{ msg }}</li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
-        
-        <!-- ADD STUDENT BUTTON -->
-        <a href="{{ url_for('add_student_form') }}" class="button">+ Add New Student</a>
+    <body class="p-4">
+        <div class="container">
+            <h1 class="mb-4">Student Dashboard</h1>
 
-        <ul>
-        {% for s in students %}
-            <li>
-            ID: {{ s.id }} - {{ s.name }} (Grade: {{ s.grade }}, Section: {{ s.section }})
-            [<a href="{{ url_for('edit_student', id=s.id) }}">Edit</a>]
-            [<a href="{{ url_for('delete_student', id=s.id) }}">Delete</a>]
-            </li>
-        {% endfor %}
-        </ul>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-success">
+                {% for msg in messages %}
+                    {{ msg }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <a href="{{ url_for('add_student_form') }}" class="btn btn-success mb-3">+ Add New Student</a>
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Grade</th>
+                        <th>Section</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for s in students %}
+                    <tr>
+                        <td>{{ s.id }}</td>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.grade }}</td>
+                        <td>{{ s.section }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_student', id=s.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{{ url_for('delete_student', id=s.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete {{ s.name }}?');">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </body>
     </html>
     """
@@ -76,22 +76,28 @@ def add_student_form():
     <html>
     <head>
         <title>Add Student</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            input { margin-bottom: 10px; padding: 5px; width: 200px; }
-            button { padding: 5px 10px; }
-        </style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     </head>
-    <body>
-        <h2>Add New Student</h2>
-        <form action="{{ url_for('add_student') }}" method="POST">
-            Name: <input type="text" name="name" required autofocus><br>
-            Grade: <input type="number" name="grade" required><br>
-            Section: <input type="text" name="section" required><br>
-            <button type="submit">Add Student</button>
-        </form>
-        <br>
-        <a href="{{ url_for('list_students') }}">Back to Student List</a>
+    <body class="p-4">
+        <div class="container">
+            <h2>Add New Student</h2>
+            <form action="{{ url_for('add_student') }}" method="POST">
+                <div class="mb-3">
+                    <label>Name</label>
+                    <input type="text" name="name" class="form-control" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label>Grade</label>
+                    <input type="number" name="grade" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Section</label>
+                    <input type="text" name="section" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Add Student</button>
+                <a href="{{ url_for('list_students') }}" class="btn btn-secondary">Back</a>
+            </form>
+        </div>
     </body>
     </html>
     """
@@ -104,8 +110,7 @@ def add_student():
     grade = int(request.form.get("grade"))
     section = request.form.get("section")
     new_id = max([s["id"] for s in students], default=0) + 1
-    new_student = {"id": new_id, "name": name, "grade": grade, "section": section}
-    students.append(new_student)
+    students.append({"id": new_id, "name": name, "grade": grade, "section": section})
     flash(f"Student '{name}' added successfully!")
     return redirect(url_for('list_students'))
 
@@ -128,22 +133,28 @@ def edit_student(id):
     <html>
     <head>
         <title>Edit Student</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            input { margin-bottom: 10px; padding: 5px; width: 200px; }
-            button { padding: 5px 10px; }
-        </style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     </head>
-    <body>
-        <h2>Edit Student</h2>
-        <form method="POST">
-            Name: <input type="text" name="name" value="{{ student.name }}" required><br>
-            Grade: <input type="number" name="grade" value="{{ student.grade }}" required><br>
-            Section: <input type="text" name="section" value="{{ student.section }}" required><br>
-            <button type="submit">Update Student</button>
-        </form>
-        <br>
-        <a href="{{ url_for('list_students') }}">Back to Student List</a>
+    <body class="p-4">
+        <div class="container">
+            <h2>Edit Student</h2>
+            <form method="POST">
+                <div class="mb-3">
+                    <label>Name</label>
+                    <input type="text" name="name" value="{{ student.name }}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Grade</label>
+                    <input type="number" name="grade" value="{{ student.grade }}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Section</label>
+                    <input type="text" name="section" value="{{ student.section }}" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Student</button>
+                <a href="{{ url_for('list_students') }}" class="btn btn-secondary">Back</a>
+            </form>
+        </div>
     </body>
     </html>
     """
