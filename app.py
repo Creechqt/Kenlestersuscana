@@ -23,6 +23,10 @@ def get_student():
 def update_student():
     data = request.get_json()
 
+    # check if JSON body exists
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
     if "name" in data:
         student["name"] = data["name"]
 
